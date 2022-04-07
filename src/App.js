@@ -8,6 +8,7 @@ function App() {
   const [dice, setDice] = useState(() => allNewDice());
   const [tenzies, setTenzies] = useState(false);
   const [rollDiceCount, setRollDiceCount] = useState(0);
+  const [seconds, setSeconds] = useState(0);
 
   useEffect(() => {
     const firstDie = dice[0].value;
@@ -16,6 +17,20 @@ function App() {
       setTenzies(true);
     }
   }, [dice]);
+
+  useEffect(() => {
+    if (!tenzies) {
+      const timer = setInterval(() => setSeconds((s) => s + 1), 1000);
+      return () => clearInterval(timer);
+    }
+  }, [tenzies]);
+
+  function formatTimer(secs) {
+    const dHour = `${Math.trunc(secs / 3600)}`.padStart(2, '0');
+    const dMin = `${Math.trunc((secs - dHour * 3600) / 60)}`.padStart(2, '0');
+    const dSec = `${secs % 60}`.padStart(2, '0');
+    return `${dHour}:${dMin}:${dSec}`;
+  }
 
   function getNewDice() {
     return {
@@ -70,8 +85,8 @@ function App() {
       {tenzies && <Confetti />}
       <h1 className='title'>Tenzies</h1>
       <p className='instructions'>
-        Roll until all dice are the same. Click each die to freeze it at its
-        current value between rolls.
+        Roll until all dice are the same. <br />
+        Click each die to freeze it at its current value between rolls.
       </p>
       <div className='die-container'>{dieElements}</div>
       <h2 className='roll-counter'>
@@ -80,6 +95,10 @@ function App() {
       <button className='roll-dice' onClick={rollDice}>
         {tenzies ? 'New Game' : 'Roll Dice'}
       </button>
+      <p className='timerLabel'>
+        {` Elapsed Time:
+           ${formatTimer(seconds)}`}
+      </p>
     </main>
   );
 }
