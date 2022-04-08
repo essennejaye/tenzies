@@ -12,6 +12,18 @@ main {
   width: 90%;
   height: 800px;
   border-radius: 5px;
+  position: relative;
+}
+.best-time {
+  font-size: 70px;
+  color: #59e391;
+  margin-bottom: 20px;
+  animation: blink-animation 1s steps(5, start) infinite;
+}
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
 }
 .title {
   font-size: 40px;
@@ -109,6 +121,10 @@ main {
   max-width: 150px;
   text-align: center;
   white-space: pre-line;
+}
+.bottom-right {
+  position: absolute;
+  bottom: 4rem;
 }
 .timer {
   max-width: 33px;

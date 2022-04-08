@@ -9,18 +9,18 @@ function App() {
   const [tenzies, setTenzies] = useState(false);
   const [rollDiceCount, setRollDiceCount] = useState(0);
   const [seconds, setSeconds] = useState(0);
+  const [newBestTime, setNewBestTime] = useState(false);
 
   useEffect(() => {
     const firstDie = dice[0].value;
     const gameOver = dice.every((die) => die.isHeld && die.value === firstDie);
     if (gameOver) {
       setTenzies(true);
-      const prevTime = parseInt(localStorage.getItem('time')) || null;
-      if (prevTime && seconds < prevTime) {
+      const prevBestTime = parseInt(localStorage.getItem('time')) || 0;
+      if (prevBestTime === 0 || seconds < prevBestTime) {
         // tell user this is his best time
-        console.log('Best time');
-        localStorage.setItem('time', seconds);
-      } else {
+        setNewBestTime(true);
+        console.log('Best time ', seconds);
         localStorage.setItem('time', seconds);
       }
     }
@@ -31,18 +31,7 @@ function App() {
       const timer = setInterval(() => setSeconds((s) => s + 1), 1000);
       return () => clearInterval(timer);
     }
-    // else {
-    // const prevTime = parseInt(localStorage.getItem('time')) || null;
-    // if (prevTime && seconds < prevTime) {
-    //   // tell user this is his best time
-    //   console.log('Best time');
-    //   localStorage.setItem('time', seconds);
-    // }
-    // else {
-    //   localStorage.setItem('time', seconds);
-    // }
-    // }
-  }, [tenzies]);
+  });
 
   function formatTimer(secs) {
     const dHour = `${Math.trunc(secs / 3600)}`.padStart(2, '0');
@@ -72,6 +61,8 @@ function App() {
       setTenzies(false);
       setDice(allNewDice());
       setRollDiceCount(0);
+      setSeconds(0);
+      setNewBestTime(false);
     } else {
       setRollDiceCount((prevCount) => prevCount + 1);
       setDice((oldDice) =>
@@ -101,6 +92,7 @@ function App() {
 
   return (
     <main>
+      {newBestTime && <h1 className='best-time'>New Record</h1>}
       {tenzies && <Confetti />}
       <h1 className='title'>Tenzies</h1>
       <p className='instructions'>
@@ -114,7 +106,7 @@ function App() {
       <button className='roll-dice' onClick={rollDice}>
         {tenzies ? 'New Game' : 'Roll Dice'}
       </button>
-      <p className='timerLabel'>
+      <p className='timerLabel bottom-right'>
         {` Elapsed Time:
            ${formatTimer(seconds)}`}
       </p>
