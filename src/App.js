@@ -15,6 +15,14 @@ function App() {
     const gameOver = dice.every((die) => die.isHeld && die.value === firstDie);
     if (gameOver) {
       setTenzies(true);
+      const prevTime = parseInt(localStorage.getItem('time')) || null;
+      if (prevTime && seconds < prevTime) {
+        // tell user this is his best time
+        console.log('Best time');
+        localStorage.setItem('time', seconds);
+      } else {
+        localStorage.setItem('time', seconds);
+      }
     }
   }, [dice]);
 
@@ -23,6 +31,17 @@ function App() {
       const timer = setInterval(() => setSeconds((s) => s + 1), 1000);
       return () => clearInterval(timer);
     }
+    // else {
+    // const prevTime = parseInt(localStorage.getItem('time')) || null;
+    // if (prevTime && seconds < prevTime) {
+    //   // tell user this is his best time
+    //   console.log('Best time');
+    //   localStorage.setItem('time', seconds);
+    // }
+    // else {
+    //   localStorage.setItem('time', seconds);
+    // }
+    // }
   }, [tenzies]);
 
   function formatTimer(secs) {
