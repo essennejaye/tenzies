@@ -124,14 +124,20 @@ function App() {
         Click Start to load dice and start timer. <br />
         Roll until all dice are the same. <br />
         Click each die to freeze it at its current value between rolls. <br />
-        Clicking Pause will temporarily stop the timer, disable the roll <br />
-        &nbsp;&nbsp;&nbsp; button and hide dice until Start is clicked.
+        Clicking Pause will temporarily stop the timer and hide the dice.
         <br />
         Your best time will be saved.
       </p>
 
       <div className='container'>
-        {intervalId ? <div className='die-container'>{dieElements}</div> : null}
+        {intervalId ? (
+          <div className='die-container'>{dieElements}</div>
+        ) : (
+          <h1 className='paused'>
+            Click <span> Start </span>
+            to continue
+          </h1>
+        )}
       </div>
       <h2 className='roll-counter'>
         Number of Rolls: <span>{rollDiceCount}</span>
