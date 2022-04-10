@@ -36,14 +36,6 @@ function App() {
     }
   }, [dice, intervalId, seconds]);
 
-  // Timer to track elapsed game time
-  // useEffect(() => {
-  //   if (!tenzies) {
-  //     const timer = setInterval(() => setSeconds((s) => s + 1), 1000);
-  //     return () => clearInterval(timer);
-  //   }
-  // });
-
   // formats time for display
   function formatTimer(secs) {
     const dHour = `${Math.trunc(secs / 3600)}`.padStart(2, '0');
@@ -137,6 +129,7 @@ function App() {
         <br />
         Your best time will be saved.
       </p>
+
       <div className='container'>
         {intervalId ? <div className='die-container'>{dieElements}</div> : null}
       </div>
@@ -152,8 +145,6 @@ function App() {
         >
           {tenzies ? 'New Game' : 'Roll'}
         </button>
-
-        {/* disable pause button when game ends */}
         <button
           className='btn game-play'
           style={styles}
