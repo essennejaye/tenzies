@@ -10,29 +10,41 @@ function App() {
   const [rollDiceCount, setRollDiceCount] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [newBestTime, setNewBestTime] = useState(false);
+  const [intervalId, setIntervalId] = useState(0);
+  const [disableRollBtn, setDisableRollBtn] = useState(true);
+  const [disableGameBtn, setDisableGameBtn] = useState(false);
 
+  const styles = {
+    backgroundColor: intervalId ? 'tomato' : 'green',
+  };
+
+  // tracks if game is over and saves best time
+  // to local storage, alerts user if new best time has
+  // been established
   useEffect(() => {
     const firstDie = dice[0].value;
     const gameOver = dice.every((die) => die.isHeld && die.value === firstDie);
     if (gameOver) {
       setTenzies(true);
+      clearInterval(intervalId);
+      setDisableGameBtn(true);
       const prevBestTime = parseInt(localStorage.getItem('time')) || 0;
       if (prevBestTime === 0 || seconds < prevBestTime) {
-        // tell user this is his best time
         setNewBestTime(true);
-        console.log('Best time ', seconds);
         localStorage.setItem('time', seconds);
       }
     }
-  }, [dice]);
+  }, [dice, intervalId, seconds]);
 
-  useEffect(() => {
-    if (!tenzies) {
-      const timer = setInterval(() => setSeconds((s) => s + 1), 1000);
-      return () => clearInterval(timer);
-    }
-  });
+  // Timer to track elapsed game time
+  // useEffect(() => {
+  //   if (!tenzies) {
+  //     const timer = setInterval(() => setSeconds((s) => s + 1), 1000);
+  //     return () => clearInterval(timer);
+  //   }
+  // });
 
+  // formats time for display
   function formatTimer(secs) {
     const dHour = `${Math.trunc(secs / 3600)}`.padStart(2, '0');
     const dMin = `${Math.trunc((secs - dHour * 3600) / 60)}`.padStart(2, '0');
@@ -48,6 +60,7 @@ function App() {
     };
   }
 
+  // initializes game dice
   function allNewDice() {
     const newDice = [];
     for (let i = 0; i < 10; i++) {
@@ -56,20 +69,25 @@ function App() {
     return newDice;
   }
 
+  // track number of rolls and get new dice
+  // if game over reset state variables to initial game state
   function rollDice() {
-    if (tenzies) {
-      setTenzies(false);
-      setDice(allNewDice());
-      setRollDiceCount(0);
-      setSeconds(0);
-      setNewBestTime(false);
-    } else {
+    if (!tenzies) {
       setRollDiceCount((prevCount) => prevCount + 1);
       setDice((oldDice) =>
         oldDice.map((oldDie) =>
           oldDie.isHeld === true ? oldDie : getNewDice()
         )
       );
+    } else {
+      setTenzies(false);
+      setDice(allNewDice());
+      setRollDiceCount(0);
+      setSeconds(0);
+      setNewBestTime(false);
+      setIntervalId(0);
+      setDisableRollBtn(true);
+      setDisableGameBtn(false);
     }
   }
 
@@ -79,6 +97,21 @@ function App() {
         oldDie.id === id ? { ...oldDie, isHeld: !oldDie.isHeld } : oldDie
       )
     );
+  }
+
+  function handleClick() {
+    // if timer is paused
+    if (intervalId) {
+      clearInterval(intervalId);
+      setIntervalId(0);
+      setDisableRollBtn(true);
+      return;
+    }
+    const newIntervalId = setInterval(() => {
+      setSeconds((prevSec) => prevSec + 1);
+    }, 1000);
+    setIntervalId(newIntervalId);
+    setDisableRollBtn(false);
   }
 
   const dieElements = dice.map((die) => (
@@ -92,21 +125,46 @@ function App() {
 
   return (
     <main>
-      {newBestTime && <h1 className='best-time'>New Record</h1>}
+      {newBestTime && <h1 className='best-time'>New Time Record</h1>}
       {tenzies && <Confetti />}
       <h1 className='title'>Tenzies</h1>
       <p className='instructions'>
+        Click Start to load dice and start timer. <br />
         Roll until all dice are the same. <br />
-        Click each die to freeze it at its current value between rolls.
+        Click each die to freeze it at its current value between rolls. <br />
+        Clicking Pause will temporarily stop the timer, disable the roll <br />
+        &nbsp;&nbsp;&nbsp; button and hide dice until Start is clicked.
+        <br />
+        Your best time will be saved.
       </p>
-      <div className='die-container'>{dieElements}</div>
+      <div className='container'>
+        {intervalId ? <div className='die-container'>{dieElements}</div> : null}
+      </div>
       <h2 className='roll-counter'>
         Number of Rolls: <span>{rollDiceCount}</span>
       </h2>
-      <button className='roll-dice' onClick={rollDice}>
-        {tenzies ? 'New Game' : 'Roll Dice'}
-      </button>
-      <p className='timerLabel bottom-right'>
+
+      <div className='btn-container'>
+        <button
+          className='btn roll-dice'
+          disabled={disableRollBtn}
+          onClick={rollDice}
+        >
+          {tenzies ? 'New Game' : 'Roll'}
+        </button>
+
+        {/* disable pause button when game ends */}
+        <button
+          className='btn game-play'
+          style={styles}
+          onClick={handleClick}
+          disabled={disableGameBtn}
+        >
+          {intervalId ? 'Pause' : 'Start'}
+        </button>
+      </div>
+
+      <p className='timerLabel top-right'>
         {` Elapsed Time:
            ${formatTimer(seconds)}`}
       </p>
