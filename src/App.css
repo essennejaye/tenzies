@@ -36,6 +36,7 @@ main {
   font-weight: 700;
   margin: 15px 0px;
   text-align: left;
+  line-height: 1.6;
 }
 /* dice container and dice */
 .container {
@@ -54,14 +55,18 @@ main {
   gap: 20px;
   margin: 10px;
 }
-.paused {
+/* text inside of die container for start of game and when game is paused */
+h1.pause-text,
+h1.start-text {
   display: flex;
   flex-direction: column;
   text-align: center;
-  font-size: 40px;
+  font-size: 60px;
+}
+h1.pause-text {
   color: tomato;
 }
-.paused span {
+h1.start-text {
   color: green;
 }
 .die-face {

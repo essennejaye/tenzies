@@ -17,6 +17,12 @@ function App() {
   const styles = {
     backgroundColor: intervalId ? 'tomato' : 'green',
   };
+  const pauseGameStyle = {
+    display: !intervalId && seconds ? 'block' : 'none',
+  };
+  const startGameStyle = {
+    display: !intervalId && !seconds ? 'block' : 'none',
+  };
 
   // tracks if game is over and saves best time
   // to local storage, alerts user if new best time has
@@ -93,6 +99,7 @@ function App() {
 
   function handleClick() {
     // if timer is paused
+    // change display to visible of h1.paused
     if (intervalId) {
       clearInterval(intervalId);
       setIntervalId(0);
@@ -104,6 +111,7 @@ function App() {
     }, 1000);
     setIntervalId(newIntervalId);
     setDisableRollBtn(false);
+    // change display to hidden of h1.paused
   }
 
   const dieElements = dice.map((die) => (
@@ -121,21 +129,25 @@ function App() {
       {tenzies && <Confetti />}
       <h1 className='title'>Tenzies</h1>
       <p className='instructions'>
-        Click Start to load dice and start timer. <br />
+        Click <span>Start</span> button to load dice and start timer. <br />
         Roll until all dice are the same. <br />
         Click each die to freeze it at its current value between rolls. <br />
-        Clicking Pause will temporarily stop the timer and hide the dice.
+        Clicking the <span>Pause</span> button will temporarily stop the timer
+        <br />
+        &nbsp;&nbsp;and hide the dice.
         <br />
         Your best time will be saved.
       </p>
 
       <div className='container'>
+        <h1 className='start-text' style={startGameStyle}>
+          Start
+        </h1>
         {intervalId ? (
           <div className='die-container'>{dieElements}</div>
         ) : (
-          <h1 className='paused'>
-            Click <span> Start </span>
-            to continue
+          <h1 className='pause-text' style={pauseGameStyle}>
+            Paused
           </h1>
         )}
       </div>
