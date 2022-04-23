@@ -98,8 +98,6 @@ function App() {
   }
 
   function handleClick() {
-    // if timer is paused
-    // change display to visible of h1.paused
     if (intervalId) {
       clearInterval(intervalId);
       setIntervalId(0);
@@ -111,7 +109,6 @@ function App() {
     }, 1000);
     setIntervalId(newIntervalId);
     setDisableRollBtn(false);
-    // change display to hidden of h1.paused
   }
 
   const dieElements = dice.map((die) => (
@@ -125,14 +122,17 @@ function App() {
 
   return (
     <main>
-      {newBestTime && <h1 className='best-time'>New Time Record</h1>}
+      {newBestTime && <h1 className='best-time'>Best Time</h1>}
       {tenzies && <Confetti />}
       <h1 className='title'>Tenzies</h1>
       <p className='instructions'>
-        Click <span>Start</span> button to load dice and start timer. <br />
-        Roll until all dice are the same. <br />
+        Click the <span className='start-text'>Start</span> button to load dice
+        and start timer. <br />
+        Click the <span className='roll-text'>Roll</span> button until all dice
+        are the same. <br />
         Click each die to freeze it at its current value between rolls. <br />
-        Clicking the <span>Pause</span> button will temporarily stop the timer
+        Click the <span className='pause-text'>Pause</span> button to
+        temporarily stop the timer
         <br />
         &nbsp;&nbsp;and hide the dice.
         <br />
